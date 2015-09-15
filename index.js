@@ -122,7 +122,6 @@ function unCss (htmlFiles, options) {
             if (rule.selectors && rule.selectors.length) {
                 rule.selectors.forEach(function (selector) {
 
-                    console.log(selector);
                     // remove pseudos that won't work in the querySelector to prevent false positives
                     selector = _removePseudos(selector);
 
