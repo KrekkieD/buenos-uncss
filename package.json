@@ -1,6 +1,6 @@
 {
   "name": "buenos-uncss",
-  "version": "0.1.0-alpha",
+  "version": "0.0.9",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://krekkied@github.com/KrekkieD/buenos-uncss.git"
+    "url": "git+https://github.com/KrekkieD/buenos-uncss.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Gregory Cowan",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/KrekkieD/buenos-uncss/issues"
   },
