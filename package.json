@@ -1,0 +1,25 @@
+{
+  "name": "buenos-uncss",
+  "version": "0.1.0-alpha",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://krekkied@github.com/KrekkieD/buenos-uncss.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KrekkieD/buenos-uncss/issues"
+  },
+  "homepage": "https://github.com/KrekkieD/buenos-uncss#readme",
+  "dependencies": {
+    "css": "^2.2.1",
+    "globby": "^3.0.1",
+    "q": "^1.4.1",
+    "uncss": "^0.12.1"
+  }
+}
