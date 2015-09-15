@@ -10,6 +10,7 @@ var $globby = require('globby');
 module.exports = buenosUnCss;
 module.exports.glob = glob;
 
+$q.longStackSupport = true;
 
 function buenosUnCss (htmlFiles, options) {
 
@@ -19,13 +20,13 @@ function buenosUnCss (htmlFiles, options) {
 
 function glob (htmlGlob, cssGlob) {
 
-    return $q.all([
+    return $q.allSettled([
         _getHtmlFiles(htmlGlob),
         _getCssFiles(cssGlob)
     ]).then(function (result) {
 
-        var htmlFiles = result.shift();
-        var cssFiles = result.shift();
+        var htmlFiles = result.shift().value;
+        var cssFiles = result.shift().value;
 
         // read and concat the cssFiles
         return _readCss(cssFiles)
@@ -35,7 +36,7 @@ function glob (htmlGlob, cssGlob) {
                 var options = {
                     raw: rawCss,
                     report: true,
-                    ignoreSheets: [/.*\*\.css.*/]
+                    ignoreSheets: [/.*\.css.*/]
                 };
 
                 return unCss(htmlFiles, options);
@@ -64,15 +65,38 @@ function _readCss (files) {
 
     files.forEach(function (file) {
 
-        deferreds.push($q.nfcall($fs.readFile, file));
+        deferreds.push($q.nfcall($fs.readFile, file)
+            .then(function (source) {
+
+                // validate proper format for each file
+                try {
+                    $css.parse(source.toString());
+                    return source;
+                } catch (e) {
+                    console.log('Error while parsing css, skipping file: ' + file);
+                    console.log(e);
+                    throw e;
+                }
+
+
+            }));
 
     });
 
-    return $q.all(deferreds)
-        .then(function (sources) {
+    return $q.allSettled(deferreds)
+        .then(function (promises) {
+
+            var validatedSources = [];
+            promises.forEach(function (promise) {
+
+                if (promise.state === 'fulfilled') {
+                    validatedSources.push(promise.value);
+                }
+
+            });
 
             // concat sources and return
-            return Buffer.concat(sources).toString();
+            return Buffer.concat(validatedSources).toString();
 
         });
 
@@ -97,6 +121,11 @@ function unCss (htmlFiles, options) {
 
             if (rule.selectors && rule.selectors.length) {
                 rule.selectors.forEach(function (selector) {
+
+                    console.log(selector);
+                    // remove pseudos that won't work in the querySelector to prevent false positives
+                    selector = _removePseudos(selector);
+
                     if (allUniqueSelectors.indexOf(selector) === -1) {
                         allUniqueSelectors.push(selector);
                     }
@@ -131,5 +160,45 @@ function unCss (htmlFiles, options) {
     });
 
     return deferred.promise;
+
+}
+
+function _removePseudos (selector) {
+
+    // the pseudos that are commented out appear to be working in the querySelector
+    var pseudos = [
+        ':active',
+        ':after',
+        ':before',
+        ':checked',
+        //':disabled',
+        ':empty',
+        //':enabled',
+        //':first-child',
+        //':first-of-type',
+        ':focus',
+        ':hover',
+        ':in-range',
+        //':invalid',
+        //':last-child',
+        //':last-of-type',
+        //':link',
+        //':only-of-type',
+        //':only-child',
+        //':optional',
+        ':out-of-range',
+        //':read-only',
+        //':read-write',
+        //':required',
+        //':root',
+        ':target',
+        //':valid',
+        ':visited'
+    ];
+
+    pseudos = '(' + pseudos.join('|') + ')';
+
+    var regex = new RegExp(pseudos, 'g');
+    return selector.replace(regex,'');
 
 }
