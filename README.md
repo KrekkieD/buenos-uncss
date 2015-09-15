@@ -45,7 +45,7 @@ The `report` is an object much like returned by [`uncss`](//npmjs.com/package/un
         
         // list of unused selectors! find these in your CSS and remove them.
         // note that pseudo classes may have been removed! see below.
-        unused" []
+        unused: []
     }
 }
 ```
