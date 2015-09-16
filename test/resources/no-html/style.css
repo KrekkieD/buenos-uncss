@@ -1,13 +1,13 @@
 html {
-    color: blue;
+
 }
 
 /*should be used*/
 html:after {
-    color: red;
+
 }
 
 /*should not be used*/
 .bongo:after {
-    color: yellow;
+
 }

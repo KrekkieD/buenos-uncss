@@ -6,11 +6,10 @@ var $q = require('q');
 var $css = require('css');
 var $unCss = require('uncss');
 var $globby = require('globby');
+var $cssBeautify = require('cssbeautify');
 
 module.exports = buenosUnCss;
 module.exports.glob = glob;
-
-$q.longStackSupport = true;
 
 function buenosUnCss (htmlFiles, options) {
 
@@ -27,6 +26,13 @@ function glob (htmlGlob, cssGlob) {
 
         var htmlFiles = result.shift().value;
         var cssFiles = result.shift().value;
+
+        if (htmlFiles.length === 0) {
+            throw 'No HTML files found using glob:\n' + JSON.stringify(htmlGlob, null, 4);
+        }
+        if (cssFiles.length === 0) {
+            throw 'No CSS files found using glob:\n' + JSON.stringify(cssGlob, null, 4);
+        }
 
         // read and concat the cssFiles
         return _readCss(cssFiles)
@@ -153,6 +159,13 @@ function unCss (htmlFiles, options) {
         });
 
         report.selectors.unused = remainingUniqueSelectors;
+
+        // sort the selectors, makes it more usable
+        report.selectors.all = report.selectors.all.sort();
+        report.selectors.used = report.selectors.used.sort();
+        report.selectors.unused = report.selectors.unused.sort();
+
+        report.original = $cssBeautify(report.original);
 
         deferred.resolve(report);
 
