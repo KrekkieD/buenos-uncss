@@ -161,9 +161,9 @@ function unCss (htmlFiles, options) {
         report.selectors.unused = remainingUniqueSelectors;
 
         // sort the selectors, makes it more usable
-        report.selectors.all = report.selectors.all.sort();
-        report.selectors.used = report.selectors.used.sort();
-        report.selectors.unused = report.selectors.unused.sort();
+        report.selectors.all = _arrayUnique(report.selectors.all).sort();
+        report.selectors.used = _arrayUnique(report.selectors.used).sort();
+        report.selectors.unused = _arrayUnique(report.selectors.unused).sort();
 
         report.original = $cssBeautify(report.original);
 
@@ -213,4 +213,11 @@ function _removePseudos (selector) {
     var regex = new RegExp(pseudos, 'g');
     return selector.replace(regex,'');
 
+}
+
+function _arrayUnique (sourceArray) {
+    return sourceArray.reduce(function(acc, current) {
+        if (acc.indexOf(current) < 0) acc.push(current);
+        return acc;
+    }, []);
 }

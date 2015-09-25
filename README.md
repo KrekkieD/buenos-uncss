@@ -36,15 +36,15 @@ The `report` is an object much like returned by [`uncss`](//npmjs.com/package/un
     original: '', 
     
     selectors: {
-        // a list of all selectors, includes pseudo's, unmodified from uncss
+        // a list of all selectors, includes pseudo's, returned from uncss but uniques only
         all: [],
         
         // another list of selectors, appears to have cleared some pseudo's.
-        // honestly I cannot tell you what it contains. also unmodified from uncss
+        // honestly I cannot tell you what it contains, returned from uncss but uniques only
         used: [],
         
         // list of unused selectors! find these in your CSS and remove them.
-        // note that pseudo classes may have been removed! see below.
+        // note that pseudo classes may have been removed from the selector, see docs below for an explanation.
         unused: []
     }
 }
